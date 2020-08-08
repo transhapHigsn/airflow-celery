@@ -4,7 +4,7 @@ RUN apt-get -y update
 RUN apt-get install -y build-essential
 RUN apt-get install -y --no-install-recommends libssl-dev libffi-dev libsasl2-dev libldap2-dev libpq-dev
 
-Run pip install --no-cache-dir pandas==1.1.0 numpy==1.19.1
+RUN pip install --no-cache-dir pandas==1.1.0 numpy==1.19.1
 
 RUN apt-get install -y --no-install-recommends zlib1g-dev libjpeg-dev
 RUN pip install pillow==7.2.0 psycopg2-binary==2.8.5
