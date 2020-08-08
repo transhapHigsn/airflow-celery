@@ -1,10 +1,19 @@
 # Airflow Celery Setup
 
+This setup is based on fact that it will be used for ML workloads. Apart from airflow requirements, following packages are also installed during image build itself:
+
+- Pandas (1.1.0)
+- NumPy (1.19.1)
+- SciPy (1.5.2)
+- Dask
+- Numba
+- Scikit (0.23.2)
+- XGBoost (1.1.1)
+
 ## Prerequisites
 
-1. Docker
-2. Docker Compose
-
+1. Docker (19.03+)
+2. Docker Compose (1.26+)
 
 ## Commands involved
 
@@ -17,28 +26,7 @@
 ### Getting Started
 
 - Build Image `make build`
-
-#### Docker Compose Setup
-
 - Run Airflow Setup `make run`
-
-#### Docker only setup
-
-##### Postgres setup
-
-`docker run -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=postgres -e POSTGRES_DB=airflow -e PGDATA=/var/lib/postgresql/data/pgdata -v $(pwd)/data:/var/lib/postgresql/data --network host postgres`
-
-##### Redis setup
-
-`docker run -v $(pwd)/redis_data:/data --network host redis redis-server`
-
-##### Usage for above commands
-
-1. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow initdb`
-2. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow webserver`
-3. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow scheduler`
-4. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow flower`
-5. `docker run -it --net=host -e AIRFLOW_HOME=/app -e C_FORCE_ROOT=true -v $(pwd):/app airflow-local airflow worker`
 
 ## Known Issues
 
