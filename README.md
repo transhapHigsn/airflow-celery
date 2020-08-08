@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-1. Postgres server
-2. Redis server
+1. Docker
+2. Docker Compose
+
 
 ## Commands involved
 
@@ -13,19 +14,25 @@
 4. `airflow flower`
 5. `airflow worker`
 
-### Postgres setup
+### Getting Started
+
+- Build Image `make build`
+
+#### Docker Compose Setup
+
+- Run Airflow Setup `make run`
+
+#### Docker only setup
+
+##### Postgres setup
 
 `docker run -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=postgres -e POSTGRES_DB=airflow -e PGDATA=/var/lib/postgresql/data/pgdata -v $(pwd)/data:/var/lib/postgresql/data --network host postgres`
 
-### Redis setup
+##### Redis setup
 
 `docker run -v $(pwd)/redis_data:/data --network host redis redis-server`
 
-### Docker Image build
-
-`docker build --rm -t airflow-local .`
-
-### Usage for above commands
+##### Usage for above commands
 
 1. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow initdb`
 2. `docker run -it --net=host -e AIRFLOW_HOME=/app -v $(pwd):/app airflow-local airflow webserver`

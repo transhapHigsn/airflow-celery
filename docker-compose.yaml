@@ -88,6 +88,7 @@ services:
       - AIRFLOW_HOME=/app
       - AIRFLOW_CONFIG=/app/airflow.cfg
       - PYTHONPATH=/app
+      - C_FORCE_ROOT=true
     volumes:
       - .:/app
     command: airflow worker

@@ -4,3 +4,4 @@ data/
 redis_data/
 airflow-webserver.pid
 logs/
+*.tar.gz
