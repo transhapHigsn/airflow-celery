@@ -1,0 +1,116 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:alpine
+    ports: 
+      - target: 6379
+        published: 6379
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=airflow
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=airflow
+    ports:
+      - target: 5432
+        published: 5432
+
+  airflow-web:
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    image: registry.local:5000/airflow-local:latest
+    stop_signal: SIGTERM
+    depends_on:
+      - redis
+      - postgres
+      - airflow-scheduler
+    environment:
+      - AIRFLOW_HOME=/app
+      - AIRFLOW_CONFIG=/app/airflow.cfg
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    ports:
+    - target: 9001
+      published: 9001
+      protocol: tcp
+      mode: host
+    command: airflow webserver -p 9001
+
+  airflow-init:
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    image: registry.local:5000/airflow-local:latest
+    stop_signal: SIGTERM
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - .:/app
+    environment:
+      - AIRFLOW_HOME=/app
+      - AIRFLOW_CONFIG=/app/airflow.cfg
+      - PYTHONPATH=/app
+    command: airflow initdb
+
+  airflow-scheduler:
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    image: registry.local:5000/airflow-local:latest
+    stop_signal: SIGTERM
+    depends_on:
+      - redis
+      - postgres
+      - airflow-init
+    volumes:
+      - .:/app
+    environment:
+      - AIRFLOW_HOME=/app
+      - AIRFLOW_CONFIG=/app/airflow.cfg
+      - PYTHONPATH=/app
+    command: airflow scheduler
+  
+  airflow-worker:
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    image: registry.local:5000/airflow-local:latest
+    stop_signal: SIGTERM
+    depends_on:
+      - redis
+      - postgres
+      - airflow-scheduler
+    environment:
+      - AIRFLOW_HOME=/app
+      - AIRFLOW_CONFIG=/app/airflow.cfg
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    command: airflow worker
+
+  airflow-flower:
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    image: registry.local:5000/airflow-local:latest
+    stop_signal: SIGTERM
+    depends_on:
+      - redis
+      - postgres
+      - airflow-scheduler
+    environment:
+      - AIRFLOW_HOME=/app
+      - AIRFLOW_CONFIG=/app/airflow.cfg
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    ports:
+    - target: 5555
+      published: 5555
+      protocol: tcp
+      mode: host
+    command: airflow flower
